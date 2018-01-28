@@ -656,9 +656,9 @@ def encodeFilename(s, for_subprocess=False):
     if sys.platform.startswith('java'):
         return s
 
-    #TODO: try to split just filename, keep extension
+    fileName, extension = os.path.splitext(s)
     maxByteLength = 100
-    return truncate_utf8(s.encode(get_subprocess_encoding(), 'ignore'), maxByteLength)
+    return truncate_utf8(fileName.encode(get_subprocess_encoding(), 'ignore'), maxByteLength) + extension.encode(get_subprocess_encoding(), 'ignore')
 
 
 def decodeFilename(b, for_subprocess=False):
