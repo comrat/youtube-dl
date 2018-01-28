@@ -614,6 +614,27 @@ def get_subprocess_encoding():
     return encoding
 
 
+def decodeok(bytestr):
+    try:
+        bytestr.decode("UTF-8")
+    except UnicodeDecodeError:
+        return False
+    return True
+
+
+def is_first_byte(byte):
+    o = ord(byte)
+    return ((0b10111111 & o) != o)
+
+
+def truncate_utf8(bytestr, maxlen):
+    L = maxlen
+    for x in xrange(1, 5):
+        if is_first_byte(bytestr[L-x]) and not decodeok(bytestr[L-x:L]):
+            return bytestr[:L-x]
+    return bytestr[:L]
+
+
 def encodeFilename(s, for_subprocess=False):
     """
     @param s The name of the file
@@ -635,7 +656,9 @@ def encodeFilename(s, for_subprocess=False):
     if sys.platform.startswith('java'):
         return s
 
-    return s.encode(get_subprocess_encoding(), 'ignore')
+    #TODO: try to split just filename, keep extension
+    maxByteLength = 100
+    return truncate_utf8(s.encode(get_subprocess_encoding(), 'ignore'), maxByteLength)
 
 
 def decodeFilename(b, for_subprocess=False):
