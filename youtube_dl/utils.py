@@ -658,7 +658,10 @@ def encodeFilename(s, for_subprocess=False):
 
     fileName, extension = os.path.splitext(s)
     maxByteLength = 100
-    return truncate_utf8(fileName.encode(get_subprocess_encoding(), 'ignore'), maxByteLength) + extension.encode(get_subprocess_encoding(), 'ignore')
+    if len(fileName) >= maxByteLength:
+        return truncate_utf8(fileName.encode(get_subprocess_encoding(), 'ignore'), maxByteLength) + extension.encode(get_subprocess_encoding(), 'ignore')
+    else:
+        return s.encode(get_subprocess_encoding(), 'ignore')
 
 
 def decodeFilename(b, for_subprocess=False):
