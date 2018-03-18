@@ -657,7 +657,7 @@ def encodeFilename(s, for_subprocess=False):
         return s
 
     fileName, extension = os.path.splitext(s)
-    maxByteLength = 100
+    maxByteLength = 90
     if len(fileName) >= maxByteLength:
         return truncate_utf8(fileName.encode(get_subprocess_encoding(), 'ignore'), maxByteLength) + extension.encode(get_subprocess_encoding(), 'ignore')
     else:
